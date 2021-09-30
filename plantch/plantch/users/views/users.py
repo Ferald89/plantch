@@ -3,7 +3,15 @@
 from django.http import HttpResponse
 from django.views import View
 
-class MyView(View):
+from rest_framework import serializers, viewsets
 
-    def get(self, request, *args, **kwargs):
-        return HttpResponse('Hello, World!')
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'is_staff']
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
