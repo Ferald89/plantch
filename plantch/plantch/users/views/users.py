@@ -5,7 +5,8 @@ from django.views import View
 
 from rest_framework import serializers, viewsets
 
-from django.contrib.auth.models import User
+# Models
+from plantch.users.models import User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

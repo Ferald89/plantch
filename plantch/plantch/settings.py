@@ -28,6 +28,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+# USER
+AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 
 DJANGO_APPS = [
@@ -135,6 +138,13 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Admin
+ADMIN_URL = 'admin/'
+
+ADMINS = [('Fernando Aldair', 'fernando9895@gmail.com')]
+
+
 
 # Django REST Framework
 REST_FRAMEWORK = {
