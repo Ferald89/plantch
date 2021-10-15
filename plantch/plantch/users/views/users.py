@@ -1,18 +1,29 @@
 """Users views."""
 
-from django.http import HttpResponse
-from django.views import View
+# Django REST Framework
+from rest_framework import mixins,status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from rest_framework import serializers, viewsets
+# Serializers
+from plantch.users.serializers import UserModelSerializer
 
 # Models
 from plantch.users.models import User
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'is_staff']
-
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet  
+                                            ):
+    """User view set.
+    handle sign up, login and account verification.
+    """
+    serializer_class = UserModelSerializer
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+    @action(detail=False, methods=['post'])
+    def signup(self, request):
+        """User sign up."""
+        user = request.user
+        data = UserModelSerializer(user).data
+        return(Response(data, status=status.HTTP_201_CREATED))
