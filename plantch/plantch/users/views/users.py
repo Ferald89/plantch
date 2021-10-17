@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 # Serializers
-from plantch.users.serializers import UserModelSerializer
+from plantch.users.serializers import UserModelSerializer, UserSignUpSerializer
 
 # Models
 from plantch.users.models import User
@@ -24,6 +24,9 @@ class UserViewSet(mixins.RetrieveModelMixin,
     @action(detail=False, methods=['post'])
     def signup(self, request):
         """User sign up."""
-        user = request.user
-        data = UserModelSerializer(user).data
+        serializer = UserSignUpSerializer(data=request.data)
+        # import ipdb; ipdb.set_trace()
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        data = UserModelSerializer(user).data 
         return(Response(data, status=status.HTTP_201_CREATED))
