@@ -25,7 +25,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
     def signup(self, request):
         """User sign up."""
         serializer = UserSignUpSerializer(data=request.data)
-        # import ipdb; ipdb.set_trace()
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         data = UserModelSerializer(user).data 

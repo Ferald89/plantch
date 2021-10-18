@@ -10,6 +10,8 @@ from plantch.utils.models import PlantchModel
 
 class User(PlantchModel, AbstractUser):
     
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+
     phone_regex = RegexValidator(
          regex=r'\+?1?\d{9,15}$',
          message="Phone number must be entered in the format: +9999999. up to 15 digits allowed."
