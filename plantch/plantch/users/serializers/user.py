@@ -1,11 +1,12 @@
 """User serializers."""
 
 # Django
-from django.contrib.auth import password_validation
+from django.contrib.auth import password_validation, authenticate
 
 # Django REST framework
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework.authtoken.models import Token
 
 # Model
 from plantch.users.models import User
@@ -52,3 +53,23 @@ class UserSignUpSerializer(serializers.Serializer):
         user = User.objects.create_user(**data)
         Profile.objects.create(user=user)
         return user
+
+class UserLoginSerializer(serializers.Serializer):
+    """User Login serializer.
+    Handle the login request
+    """
+    username = serializers.CharField()
+    password = serializers.CharField(min_length=8, max_length=64)
+
+    def validate(self, data):
+        """Check credentials."""
+        user = authenticate(username=data['username'], password=data['password'])
+        if not user:
+            raise serializers.ValidationError('Invalid Credentials')
+        self.context['user'] = user
+        return data
+
+    def create(self, data):
+        """Generate or retrieve new token."""
+        token,created = Token.objects.get_or_create(user=self.context['user'])
+        return self.context['user'], token.key

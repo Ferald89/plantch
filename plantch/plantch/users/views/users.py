@@ -6,7 +6,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 # Serializers
-from plantch.users.serializers import UserModelSerializer, UserSignUpSerializer
+from plantch.users.serializers import (
+                                UserModelSerializer, 
+                                UserSignUpSerializer,
+                                UserLoginSerializer,
+                                )
 
 # Models
 from plantch.users.models import User
@@ -20,6 +24,18 @@ class UserViewSet(mixins.RetrieveModelMixin,
     """
     serializer_class = UserModelSerializer
     queryset = User.objects.all()
+
+    @action(detail=False, methods=["post"])
+    def login(self, request):
+        """User log in."""
+        serializers = UserLoginSerializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        user, token = serializers.save()
+        data = {
+            'user': UserModelSerializer(user).data,
+            'access_token': token
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def signup(self, request):
