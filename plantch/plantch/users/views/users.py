@@ -10,6 +10,7 @@ from plantch.users.serializers import (
                                 UserModelSerializer, 
                                 UserSignUpSerializer,
                                 UserLoginSerializer,
+                                ProfileModelSerializer
                                 )
 
 # Models
@@ -45,3 +46,20 @@ class UserViewSet(mixins.RetrieveModelMixin,
         user = serializer.save()
         data = UserModelSerializer(user).data 
         return(Response(data, status=status.HTTP_201_CREATED))
+
+    @action(detail=False, methods=['put', 'patch'])
+    def profile(self, request, *args, **kwargs):
+        """Update profile data."""
+        user = self.get_object()
+        profile = user.profile
+        partial = request.method == 'PATCH'
+        serializer = ProfileModelSerializer(
+            profile,
+            data=request.data,
+            partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()   
+        data = UserModelSerializer(user).data
+        return Response(data)
+        
